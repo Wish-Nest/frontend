@@ -14,7 +14,9 @@ export default function MenuContent({onClick}: {onClick: () => void}) {
         setFamilies(null);
         axios.get("/family")
             .then(response => {
-                setFamilies(response.data);
+                // Garde anti-crash : si /api renvoie du HTML (fallback nginx) ou
+                // un objet d'erreur en 2xx, response.data n'est pas un tableau.
+                setFamilies(Array.isArray(response.data) ? response.data : []);
             }).catch(() => {
                 setFamilies([]);
             });

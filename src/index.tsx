@@ -13,11 +13,12 @@ import Index from "./pages/Index";
 import {ProtectedRoute} from "./components/ProtectedRoute";
 import FamilyIndex from "./pages/FamilyIndex";
 import Confirm from "./pages/Confirm";
+import RouteError from "./components/RouteError";
 import { initPWA } from './pwa/initPWA';
 
 const router = createBrowserRouter(
     createRoutesFromElements(
-        <Route path={"/"}>
+        <Route path={"/"} errorElement={<RouteError/>}>
             <Route index element={<ProtectedRoute element={<Index/>}/>}/>
             <Route path={"families/:familyId/member/:memberId/gifts/:giftUuid"} element={<ProtectedRoute element={<FamilyIndex/>}/>}/>
             <Route path={"families/:familyId/member/:memberId"} element={<ProtectedRoute element={<FamilyIndex/>}/>}/>

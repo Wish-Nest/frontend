@@ -21,7 +21,11 @@ export default function FamilyInvitationsSideContent({refreshFamilies}: {refresh
     useEffect(() => {
         axios.get("/user/invitations")
             .then(response => {
-                setInvitations(response.data);
+                // Garde anti-crash : si /api renvoie du HTML (fallback nginx) ou
+                // un objet d'erreur en 2xx, response.data n'est pas un tableau.
+                setInvitations(Array.isArray(response.data) ? response.data : []);
+            }).catch(() => {
+                setInvitations([]);
             });
     }, [user?.uuid]);
 
