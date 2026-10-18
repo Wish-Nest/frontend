@@ -6,6 +6,8 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
+ARG APP_VERSION
+ENV VITE_APP_VERSION=$APP_VERSION
 ENV NODE_OPTIONS --max-old-space-size=11000
 ENV CI false
 ENV GENERATE_SOURCEMAP false

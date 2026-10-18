@@ -10,6 +10,7 @@ import { useNavigate } from 'react-router-dom';
 import {useAuth} from "../../provider/AuthProvider";
 import Box from "@mui/material/Box";
 import Tooltip from '@mui/material/Tooltip';
+import VersionInfo from "./VersionInfo";
 
 interface SideMenuMobileProps {
   open: boolean | undefined;
@@ -85,6 +86,7 @@ export default function SideMenuMobile({ open, toggleDrawer }: SideMenuMobilePro
             GitHub
           </a>
         </Typography>
+        <VersionInfo/>
       </Box>
       <Stack sx={{ p: 2 }}>
         <Button variant="outlined" fullWidth startIcon={<LogoutRounded />} onClick={() => {

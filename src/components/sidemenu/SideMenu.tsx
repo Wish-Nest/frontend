@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography';
 import {useAuth} from "../../provider/AuthProvider";
 import MenuContent from "./MenuContent";
 import OptionsMenu from "./OptionsMenu";
+import VersionInfo from "./VersionInfo";
 
 const drawerWidth = 240;
 
@@ -62,6 +63,7 @@ export default function SideMenu() {
                         GitHub
                     </a>
                 </Typography>
+                <VersionInfo/>
             </Box>
             <Stack
                 direction="row"
