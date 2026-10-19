@@ -34,11 +34,6 @@ export default function MemberHeader({ member, currentUserUuid, onAddSelf, onAdd
                         "Votre liste de souhaits" :
                         "Liste de souhaits de " + member.name}
                 </Typography>
-                {canRename && <RenameMemberButton member={member} onRenamed={() => {
-                    if (family) {
-                        selectFamily(family.uuid);
-                    }
-                }} />}
             </Stack>
             {member.userUuid === currentUserUuid && <AddSelfGift onAdd={onAddSelf ?? (() => {})} />}
             {(member.userUuid !== currentUserUuid) && <AddPrivateGift onAdd={onAddPrivate ?? (() => {})} />}

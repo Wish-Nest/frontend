@@ -9,6 +9,8 @@ export interface UserFamily {
     userUuid: string;
     name: string;
     virtual: boolean;
+    /** Ordonnancement par priorité de la liste (réglage serveur, défaut true). */
+    priorityEnabled?: boolean;
 }
 
 export interface FamilyInvitation {

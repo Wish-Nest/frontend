@@ -4,7 +4,7 @@ import {Check, Close, Lock, PriorityHigh} from "@mui/icons-material";
 import {useEffect, useState} from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
-import {Alert, Box, Grid, IconButton, Paper, Tooltip} from "@mui/material";
+import {Alert, Box, Chip, Grid, IconButton, Paper, Tooltip} from "@mui/material";
 import DialogContent from "@mui/material/DialogContent";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
@@ -18,6 +18,7 @@ import {useMemberSelected} from "../../../provider/MemberSelectedProvider";
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { API_BASE_URL } from '../../../env';
+import { Chat } from "@mui/icons-material";
 
 function getLinksFromGift(gift: any): string[] {
     return gift.additionalLinks ?? gift.additional_links ?? [];
@@ -82,7 +83,12 @@ export default function GiftPrivateContentPopup({gift, privateData, updatePrivat
                 variant={"outlined"}
                 endIcon={privateData === false ? <Lock/> : null}
                 onClick={privateData === false ? () => {} : handleOpen}
-            >Voir plus</Button>
+            >
+                Voir plus
+                {privateData !== false && ((privateData?.messages.length ?? 0) !== 0) &&  (
+                    <Chip sx={{marginLeft: '0.5rem'}} icon={<Chat></Chat>} label={(privateData?.messages.length ?? 0)}/>
+                )}
+            </Button>
             {privateData &&
             <Dialog
                 open={open}

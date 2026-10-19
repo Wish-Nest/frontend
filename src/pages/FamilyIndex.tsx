@@ -152,6 +152,7 @@ export default function FamilyIndex() {
                                                 />
                                                 {m.userUuid === user?.uuid && <Chip label="Vous" color="success" variant="outlined" />}
                                                 {m.virtual && <Chip label="Virtuel" color="secondary" variant="outlined" />}
+                                                <Stack sx={{ marginLeft: '0.5rem' }}></Stack>
                                                 {canRenameMember(m) && <RenameMemberButton
                                                     member={m}
                                                     onRenamed={() => {

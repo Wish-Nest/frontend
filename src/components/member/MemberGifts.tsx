@@ -1,10 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {Divider, IconButton, LinearProgress, Stack, Typography, Alert} from "@mui/material";
+import {Divider, FormControlLabel, IconButton, LinearProgress, Stack, Switch, Typography, Alert} from "@mui/material";
 import {DragIndicator, LowPriority} from "@mui/icons-material";
 import GiftCard from './GiftCard';
 import PrivateGiftCard from './PrivateGiftCard';
 import {_GiftPrivateData, Gift} from "../../types/models";
 import axios from "axios";
+import {useFamily} from "../../provider/FamilyProvider";
 import {
     closestCenter,
     DndContext,
@@ -82,6 +83,11 @@ export default function MemberGifts({ gifts, privateData, member, family, curren
     const [orderedGifts, setOrderedGifts] = useState<Gift[]>(Array.isArray(gifts) ? gifts : []);
     const [savingOrder, setSavingOrder] = useState(false);
 
+    // Réglage serveur : ordonnancement par priorité de la liste (défaut : activé).
+    const {selectFamily} = useFamily();
+    const [priorityEnabled, setPriorityEnabled] = useState(member?.priorityEnabled !== false);
+    const [prioritySaving, setPrioritySaving] = useState(false);
+
     // Synchronisation local <-> props (patron « stocker l'état d'un rendu précédent »).
     const [previousGifts, setPreviousGifts] = useState<any[] | null>(gifts);
     if (previousGifts !== gifts) {
@@ -89,17 +95,32 @@ export default function MemberGifts({ gifts, privateData, member, family, curren
         setOrderedGifts(Array.isArray(gifts) ? gifts : []);
     }
 
+    // Re-synchronisation du réglage quand on change de liste (le membre est une
+    // copie figée : il n'est pas mis à jour par la relecture de la famille).
+    const [previousMember, setPreviousMember] = useState<any>(member);
+    if (previousMember !== member) {
+        setPreviousMember(member);
+        setPriorityEnabled(member?.priorityEnabled !== false);
+    }
+
     if (!member) return null;
 
-    const getGiftPrivateData = (giftUuid: string): _GiftPrivateData => {
+    const getGiftPrivateData = (giftUuid: string): false|_GiftPrivateData => {
         if (!privateData) {
-            return {messages: [], takenBy: null};
+            return false;
         }
         return privateData[giftUuid] || {messages: [], takenBy: null};
     }
 
     // Seul le propriétaire de la liste peut définir l'ordre de priorité de ses cadeaux.
     const canReorder = Boolean(currentUserUuid) && member.userUuid === currentUserUuid;
+    // Le switch n'apparaît que sur sa propre liste, jamais sur un membre virtuel
+    // (déjà écarté par canReorder — l'uuid d'un virtuel n'est pas celui de
+    // l'utilisateur connecté — mais on le rend explicite).
+    const canTogglePriority = canReorder && member.virtual !== true;
+    // Les badges et le glisser-déposer suivent le réglage serveur, pour tous
+    // les visiteurs de la liste.
+    const reorderable = canReorder && priorityEnabled;
     const visibleGifts = canReorder ? orderedGifts : (Array.isArray(gifts) ? gifts : []);
 
     function saveOrder(next: Gift[]) {
@@ -126,6 +147,25 @@ export default function MemberGifts({ gifts, privateData, member, family, curren
         saveOrder(next);
     }
 
+    function handleTogglePriority(event: React.ChangeEvent<HTMLInputElement>) {
+        const next = event.target.checked;
+        setPriorityEnabled(next); // mise à jour optimiste
+        setPrioritySaving(true);
+
+        axios.put("/familymember/" + member.uuid + "/priority", {
+            enabled: next
+        }).then(() => {
+            // Recharger la famille : les autres vues et une future sélection de
+            // ce membre doivent refléter le réglage enregistré côté serveur.
+            if (family?.uuid) {
+                selectFamily(family.uuid);
+            }
+        }).catch((error) => {
+            console.error("Failed to update priority ordering:", error);
+            setPriorityEnabled(!next); // rollback sur l'état connu du serveur
+        }).finally(() => setPrioritySaving(false));
+    }
+
     const giftCardProps = (gift: any) => ({
         giftPrivateData: getGiftPrivateData(gift.uuid),
         onEdit: refreshGifts,
@@ -142,18 +182,46 @@ export default function MemberGifts({ gifts, privateData, member, family, curren
                 Vous n'avez pas accès aux données privées de ce membre, veuillez attendre que quelqu'un vous y donne accès.
             </Alert>}
 
-            {visibleGifts.length > 1 && (
-                <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center', mt: 1, mb: 0.5, flexWrap: 'wrap' }}>
-                    <LowPriority fontSize="inherit" color="primary" />
-                    <Typography variant="caption" color="text.secondary">
-                        Ordonnés par priorité — <strong>1</strong> étant le cadeau le plus souhaité
-                        {canReorder ? ", glissez la poignée pour changer l'ordre" : ""}
-                        {savingOrder ? ' (enregistrement…)' : ''}.
-                    </Typography>
+            {(canTogglePriority || visibleGifts.length > 1) && (
+                <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center', justifyContent: 'space-between', mt: 1, mb: 0.5, flexWrap: 'wrap', gap: 1 }}>
+                    <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center', minWidth: 0 }}>
+                        {priorityEnabled && visibleGifts.length > 1 && (
+                            <>
+                                <LowPriority fontSize="inherit" color="primary" />
+                                <Typography variant="caption" color="text.secondary">
+                                    Ordonnés par priorité — <strong>1</strong> étant le cadeau le plus souhaité
+                                    {canReorder ? ", glissez la poignée pour changer l'ordre" : ""}
+                                    {savingOrder ? ' (enregistrement…)' : ''}.
+                                </Typography>
+                            </>
+                        )}
+                        {!priorityEnabled && (
+                            <Typography variant="caption" color="text.secondary">
+                                Ordonnancement par priorité désactivé — badges masqués pour tous les visiteurs
+                                {prioritySaving ? ' (enregistrement…)' : ''}.
+                            </Typography>
+                        )}
+                    </Stack>
+                    {canTogglePriority && (
+                        <FormControlLabel
+                            sx={{ m: 0 }}
+                            labelPlacement="start"
+                            label={<Typography variant="caption" color="text.secondary">Par priorité</Typography>}
+                            control={
+                                <Switch
+                                    size="small"
+                                    checked={priorityEnabled}
+                                    disabled={prioritySaving}
+                                    onChange={handleTogglePriority}
+                                    inputProps={{'aria-label': "Activer l'ordonnancement par priorité"}}
+                                />
+                            }
+                        />
+                    )}
                 </Stack>
             )}
 
-            {gifts !== null && (canReorder ? (
+            {gifts !== null && (reorderable ? (
                 <DndContext
                     sensors={sensors}
                     collisionDetection={closestCenter}
@@ -167,7 +235,7 @@ export default function MemberGifts({ gifts, privateData, member, family, curren
                             <SortableGiftCard
                                 key={gift.uuid ?? index}
                                 gift={gift}
-                                priority={visibleGifts.length > 1 ? index + 1 : undefined}
+                                priority={priorityEnabled && visibleGifts.length > 1 ? index + 1 : undefined}
                                 {...giftCardProps(gift)}
                             />
                         ))}
@@ -178,7 +246,7 @@ export default function MemberGifts({ gifts, privateData, member, family, curren
                     <GiftCard
                         key={gift.uuid ?? index}
                         gift={gift}
-                        priority={visibleGifts.length > 1 ? index + 1 : undefined}
+                        priority={priorityEnabled && visibleGifts.length > 1 ? index + 1 : undefined}
                         {...giftCardProps(gift)}
                     />
                 ))
