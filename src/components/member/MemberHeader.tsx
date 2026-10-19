@@ -33,7 +33,7 @@ export default function MemberHeader({ member, currentUserUuid, onAddSelf, onAdd
             <Stack direction="row" spacing={1} sx={{ alignItems: 'center', marginBottom: { xs: '1rem', sm: 0 } }}>
                 <Avatar
                     src={member.image ? API_BASE_URL + member.image : undefined}
-                    sx={{width: 48, height: 48, marginRight: 1}}
+                    sx={{width: 48, height: 48, marginRight: 1, display: {xs: 'none', md: 'inline-flex'}}}
                 >
                     <ImportContactsSharp />
                 </Avatar>
