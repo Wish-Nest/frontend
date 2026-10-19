@@ -8,6 +8,7 @@ import MessageRight from "./MessageRight";
 import MessageLeft from "./MessageLeft";
 import { Send } from "@mui/icons-material";
 import axios from "axios";
+import {API_BASE_URL} from "../../../env";
 
 export default function PrivateContentChat({gift, privateData, onAdd}: {
     gift: Gift,
@@ -61,6 +62,8 @@ export default function PrivateContentChat({gift, privateData, onAdd}: {
                     return;
                 }
 
+                const memberPhoto = u.image ? API_BASE_URL + u.image : undefined;
+
                 if(u?.userUuid === user?.uuid){
                     return (
                         <MessageRight
@@ -68,6 +71,7 @@ export default function PrivateContentChat({gift, privateData, onAdd}: {
                             message={message.content}
                             timestamp={message.timestamp}
                             displayName={"Vous"}
+                            photoURL={memberPhoto}
                         />
                     );
                 }
@@ -77,6 +81,7 @@ export default function PrivateContentChat({gift, privateData, onAdd}: {
                         message={message.content}
                         timestamp={message.timestamp}
                         displayName={u.name}
+                        photoURL={memberPhoto}
                     />
                 );
             })}

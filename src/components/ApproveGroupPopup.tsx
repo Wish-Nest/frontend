@@ -9,12 +9,15 @@ import {ImportContactsSharp} from "@mui/icons-material";
 import ListItemText from "@mui/material/ListItemText";
 import Box from "@mui/material/Box";
 import {useAuth} from "../provider/AuthProvider";
+import {useFamily} from "../provider/FamilyProvider";
 import ApproveGroupRequestButton from "./ApproveGroupRequestButton";
 import {GroupRequest} from "../types/models";
+import {API_BASE_URL} from "../env";
 
 export default function ApproveGroupPopup(props: {familyId: string}) {
     const [ requestsToApprove, setRequestsToApprove ] = useState<GroupRequest[]>([]);
     const { user } = useAuth();
+    const { family } = useFamily();
 
     useEffect(() => {
         axios.get("/family/" + props.familyId + "/groups/requests")
@@ -40,11 +43,12 @@ export default function ApproveGroupPopup(props: {familyId: string}) {
                             padding: 0
                         }}>
                             {requestsToApprove.map((request, index) => {
+                                const originMember = family?.members?.find(m => m.userUuid === request.originUuid);
                                 return (<ListItem key={index} sx={{
                                         padding: {xs: '0.5rem'}
                                     }}>
                                         <ListItemAvatar>
-                                            <Avatar>
+                                            <Avatar src={originMember?.image ? API_BASE_URL + originMember.image : undefined}>
                                                 <ImportContactsSharp />
                                             </Avatar>
                                         </ListItemAvatar>

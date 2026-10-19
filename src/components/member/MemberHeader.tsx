@@ -1,9 +1,11 @@
 import React from 'react';
-import { Box, Stack, Typography } from "@mui/material";
+import { Avatar, Box, Stack, Typography } from "@mui/material";
 import AddSelfGift from "./AddSelfGift";
 import AddPrivateGift from "./AddPrivateGift";
 import RenameMemberButton from "./RenameMemberButton";
+import {ImportContactsSharp} from "@mui/icons-material";
 import {useFamily} from "../../provider/FamilyProvider";
+import {API_BASE_URL} from "../../env";
 
 interface MemberHeaderProps {
     member: any;
@@ -28,7 +30,13 @@ export default function MemberHeader({ member, currentUserUuid, onAddSelf, onAdd
             justifyContent: 'space-between',
             marginBottom: '1rem'
         }}>
-            <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center', marginBottom: { xs: '1rem', sm: 0 } }}>
+            <Stack direction="row" spacing={1} sx={{ alignItems: 'center', marginBottom: { xs: '1rem', sm: 0 } }}>
+                <Avatar
+                    src={member.image ? API_BASE_URL + member.image : undefined}
+                    sx={{width: 48, height: 48, marginRight: 1}}
+                >
+                    <ImportContactsSharp />
+                </Avatar>
                 <Typography variant="h3">
                     {currentUserUuid === member.userUuid ?
                         "Votre liste de souhaits" :

@@ -21,6 +21,7 @@ import {useFamily} from "../provider/FamilyProvider";
 import {useMemberSelected} from "../provider/MemberSelectedProvider";
 import AddVirtualMemberButton from "../components/AddVirtualMemberButton";
 import RenameMemberButton from "../components/member/RenameMemberButton";
+import {API_BASE_URL} from "../env";
 
 export default function FamilyIndex() {
     const { familyId, memberId } = useParams();
@@ -143,7 +144,7 @@ export default function FamilyIndex() {
                                                 backgroundColor: m.uuid === member?.uuid ? 'hsla(220, 20%, 35%, 0.3)' : 'inherit'
                                             }} key={index}>
                                                 <ListItemAvatar>
-                                                    <Avatar>
+                                                    <Avatar src={m.image ? API_BASE_URL + m.image : undefined}>
                                                         <ImportContactsSharp />
                                                     </Avatar>
                                                 </ListItemAvatar>

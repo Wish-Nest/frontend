@@ -11,6 +11,8 @@ export interface UserFamily {
     virtual: boolean;
     /** Ordonnancement par priorité de la liste (réglage serveur, défaut true). */
     priorityEnabled?: boolean;
+    /** Image de profil du membre au sein de la famille (URL type /uploads/...), ou null. */
+    image?: string | null;
 }
 
 export interface FamilyInvitation {
@@ -24,6 +26,7 @@ export interface GroupRequest {
     targetUuid: string;
     targetName: string;
     originName: string;
+    originUuid: string;
     groupUuid: string;
     familyId: string;
 }
