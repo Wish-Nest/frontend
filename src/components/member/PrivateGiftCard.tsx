@@ -76,7 +76,7 @@ export default function PrivateGiftCard({ gift, privateData, currentUserUuid, fa
             <Stack spacing={2} direction={{ xs: 'column', sm: 'row' }} sx={{ alignItems: 'center' }}>
                 <Stack direction="row" spacing={2}>
                     {gift.byUserUuid === currentUserUuid && <DeleteGift giftUuid={gift.uuid} onDelete={onDelete ?? (() => {})} />}
-                    <GiftPrivateContentPopup gift={gift} privateData={privateData ? (privateData[gift.uuid] ?? false) : privateData} updatePrivateData={onUpdatePrivate ?? (() => {})} />
+                    <GiftPrivateContentPopup gift={gift} privateData={privateData ? (privateData[gift.uuid] ?? { messages: [], takenBy: null }) : privateData} updatePrivateData={onUpdatePrivate ?? (() => {})} />
                 </Stack>
             </Stack>
         </Card>
