@@ -47,7 +47,7 @@ function SortableGiftCard(props: React.ComponentProps<typeof GiftCard>) {
         <IconButton
             size="small"
             aria-label="Glisser pour réordonner ce cadeau"
-            sx={{cursor: 'grab', color: 'text.secondary'}}
+            sx={{cursor: 'grab', color: 'text.secondary', touchAction: 'none'}}
             {...attributes}
             {...listeners}
         >
@@ -74,8 +74,8 @@ function SortableGiftCard(props: React.ComponentProps<typeof GiftCard>) {
 export default function MemberGifts({ gifts, privateData, member, family, currentUserUuid, fetchPrivateData, refreshGifts }: MemberGiftsProps) {
     // Les hooks s'exécutent avant tout early return.
     const sensors = useSensors(
-        useSensor(PointerSensor, {activationConstraint: {distance: 6}}),
-        useSensor(TouchSensor, {activationConstraint: {delay: 200, tolerance: 8}}),
+        useSensor(PointerSensor, {activationConstraint: {distance: 5}}),
+        useSensor(TouchSensor, {activationConstraint: {delay: 150, tolerance: 6}}),
         useSensor(KeyboardSensor, {coordinateGetter: sortableKeyboardCoordinates})
     );
 
