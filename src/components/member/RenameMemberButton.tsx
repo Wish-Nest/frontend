@@ -13,6 +13,8 @@ import OutlinedInput from "@mui/material/OutlinedInput";
 import Typography from "@mui/material/Typography";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
+import LinearProgress from "@mui/material/LinearProgress";
 import {Delete, Edit} from "@mui/icons-material";
 import {UserFamily} from "../../types/models";
 import {API_BASE_URL} from "../../env";
@@ -40,6 +42,8 @@ export default function RenameMemberButton({member, onRenamed, size = "small"}: 
     const [file, setFile] = useState<File | null>(null);
     const [filePreview, setFilePreview] = useState<string | null>(null);
     const [removed, setRemoved] = useState(false);
+    /** Progression de l'envoi du fichier (null = pas d'envoi en cours). */
+    const [uploadProgress, setUploadProgress] = useState<number | null>(null);
 
     // Aperçu du fichier choisi (URL objet, à révoquer quand il change/disparaît).
     useEffect(() => {
@@ -100,8 +104,14 @@ export default function RenameMemberButton({member, onRenamed, size = "small"}: 
             if (file) {
                 const form = new FormData();
                 form.append('file', file);
+                setUploadProgress(0);
                 const res = await axios.post('/upload', form, {
-                    headers: {'Content-Type': 'multipart/form-data'}
+                    headers: {'Content-Type': 'multipart/form-data'},
+                    onUploadProgress: (event) => {
+                        if (event.total) {
+                            setUploadProgress(Math.min(100, Math.round(event.loaded * 100 / event.total)));
+                        }
+                    }
                 });
                 nextImage = res.data?.url ?? null;
             } else if (removed && member.image) {
@@ -122,6 +132,7 @@ export default function RenameMemberButton({member, onRenamed, size = "small"}: 
             setError(e?.response?.data?.error ?? "Erreur lors de l'enregistrement.");
         } finally {
             setLoading(false);
+            setUploadProgress(null);
         }
     };
 
@@ -212,6 +223,14 @@ export default function RenameMemberButton({member, onRenamed, size = "small"}: 
                             )}
                         </Box>
                     </Box>
+                    {uploadProgress !== null && (
+                        <Box sx={{width: '100%'}}>
+                            <LinearProgress variant="determinate" value={uploadProgress}/>
+                            <Typography variant="caption" color="text.secondary">
+                                Envoi de la photo… {uploadProgress}%
+                            </Typography>
+                        </Box>
+                    )}
                     <OutlinedInput
                         autoFocus
                         required
@@ -228,7 +247,7 @@ export default function RenameMemberButton({member, onRenamed, size = "small"}: 
                 <DialogActions sx={{pb: 3, px: 3}}>
                     <Button onClick={handleClose}>Annuler</Button>
                     <Button variant="contained" type="submit" disabled={loading}>
-                        Enregistrer
+                        {loading ? <CircularProgress size={20} color="inherit"/> : "Enregistrer"}
                     </Button>
                 </DialogActions>
             </Dialog>

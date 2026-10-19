@@ -146,7 +146,7 @@ export default function GiftPrivateContentPopup({gift, privateData, updatePrivat
                                     { (gift as any).image && (
                                         <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', mb: 2 }}>
                                             <Box sx={{ width: '100%', maxWidth: 720, position: 'relative' }}>
-                                                <img src={API_BASE_URL +  (gift as any).image} alt={gift.title} style={{ width: '100%', maxHeight: 420, objectFit: 'contain', borderRadius: 8 }} />
+                                                <img src={API_BASE_URL +  (gift as any).image} alt={gift.title} style={{ width: '100%', maxHeight: 420, objectFit: 'cover', borderRadius: 8 }} />
                                             </Box>
                                         </Box>
                                     )}

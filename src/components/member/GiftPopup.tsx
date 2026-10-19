@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, IconButton, Box } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, IconButton, Box, CircularProgress, LinearProgress, Typography } from "@mui/material";
 import {useEffect, useState} from "react";
 import { Add, Delete } from '@mui/icons-material';
 import axios from 'axios';
@@ -21,6 +21,8 @@ export default function GiftPopup({ setOpen, open, content, title, description, 
     const [file, setFile] = useState<File | null>(null);
     const [preview, setPreview] = useState<string | null>(initialImage ?? null);
     const [removed, setRemoved] = useState<boolean>(false);
+    /** Progression de l'envoi du fichier (null = pas d'envoi en cours). */
+    const [uploadProgress, setUploadProgress] = useState<number | null>(null);
     const edit = content !== null && title !== null;
     // Nouveau: gestion d'erreur pour le titre obligatoire
     const [titleError, setTitleError] = useState<string | null>(null);
@@ -77,9 +79,15 @@ export default function GiftPopup({ setOpen, open, content, title, description, 
             if (file) {
                 const form = new FormData();
                 form.append('file', file);
+                setUploadProgress(0);
                 const res = await axios.post('/upload', form, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
+                    },
+                    onUploadProgress: (event) => {
+                        if (event.total) {
+                            setUploadProgress(Math.min(100, Math.round(event.loaded * 100 / event.total)));
+                        }
                     }
                 });
                 imageUrl = res.data?.url;
@@ -100,6 +108,7 @@ export default function GiftPopup({ setOpen, open, content, title, description, 
             return;
         } finally {
             setLoading(false);
+            setUploadProgress(null);
             setOpen(false);
         }
     }
@@ -207,6 +216,15 @@ export default function GiftPopup({ setOpen, open, content, title, description, 
                     />
                 </div>
 
+                {uploadProgress !== null && (
+                    <Box sx={{mt: 1}}>
+                        <LinearProgress variant="determinate" value={uploadProgress}/>
+                        <Typography variant="caption" color="text.secondary">
+                            Envoi de l'image… {uploadProgress}%
+                        </Typography>
+                    </Box>
+                )}
+
             </DialogContent>
             <DialogActions>
                 <Button onClick={() => setOpen(false)} color="inherit">
@@ -215,7 +233,7 @@ export default function GiftPopup({ setOpen, open, content, title, description, 
                 <Button onClick={handleSubmit} color="primary" variant="contained"
                         disabled={loading}
                 >
-                    {edit ? "Modifier" : "Proposer"}
+                    {loading ? <CircularProgress size={20} color="inherit"/> : (edit ? "Modifier" : "Proposer")}
                 </Button>
             </DialogActions>
         </Dialog>

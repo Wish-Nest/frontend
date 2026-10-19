@@ -98,7 +98,7 @@ export default function GiftCard({ gift, giftPrivateData, onEdit, onDelete, onUp
 
                 {gift.image && (
                     <Box sx={{ mt: 1, display: 'flex', justifyContent: 'center' }}>
-                        <img src={API_BASE_URL + gift.image} alt={gift.title} style={{ maxWidth: '100%', maxHeight: 320, objectFit: 'cover', borderRadius: 8 }} />
+                        <img src={API_BASE_URL + gift.image} alt={gift.title} style={{ width: '100%', maxHeight: 320, objectFit: 'cover', borderRadius: 8 }} />
                     </Box>
                 )}
 
