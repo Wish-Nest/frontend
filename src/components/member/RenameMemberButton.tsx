@@ -23,7 +23,7 @@ interface RenameMemberButtonProps {
 }
 
 /**
- * Permet de renommer un membre : soi-même, ou un membre virtuel.
+ * Permet de renommer un membre : soi-même, ou un membre dont la liste est gérée par la famille.
  * L'autorisation réelle est vérifiée côté serveur.
  */
 export default function RenameMemberButton({member, onRenamed, size = "small"}: RenameMemberButtonProps) {

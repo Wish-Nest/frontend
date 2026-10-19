@@ -85,7 +85,7 @@ export default function FamilyIndex() {
         borderRadius: theme.shape.borderRadius
     }));
 
-    // On peut renommer son propre nom, ou n'importe quel membre virtuel.
+    // On peut renommer son propre nom, ou un membre dont la liste est gérée par la famille.
     const canRenameMember = (m: {userUuid: string, virtual: boolean}) =>
         m.userUuid === user?.uuid || m.virtual === true;
 
@@ -151,7 +151,7 @@ export default function FamilyIndex() {
                                                     primary={m.name}
                                                 />
                                                 {m.userUuid === user?.uuid && <Chip label="Vous" color="success" variant="outlined" />}
-                                                {m.virtual && <Chip label="Virtuel" color="secondary" variant="outlined" />}
+                                                {m.virtual && <Chip label="Liste gérée" title="Les souhaits de ce membre sont suivis par un membre de la famille" color="secondary" variant="outlined" />}
                                                 <Stack sx={{ marginLeft: '0.5rem' }}></Stack>
                                                 {canRenameMember(m) && <RenameMemberButton
                                                     member={m}

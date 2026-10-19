@@ -40,7 +40,7 @@ export default function AddVirtualMemberButton(props: {familyId: string, onAdded
             props.onAdded();
         } catch (e: any) {
             console.error('Failed to create virtual member', e);
-            setError(e?.response?.data?.error ?? 'Erreur lors de la création du membre virtuel');
+            setError(e?.response?.data?.error ?? 'Erreur lors de la création du membre');
         } finally {
             setLoading(false);
         }
@@ -54,7 +54,7 @@ export default function AddVirtualMemberButton(props: {familyId: string, onAdded
                 startIcon={<Add/>}
                 onClick={() => setOpen(true)}
             >
-                Ajouter membre virtuel
+                Ajouter un membre
             </Button>
             <Dialog open={open}
                     onClose={handleClose}
@@ -65,12 +65,12 @@ export default function AddVirtualMemberButton(props: {familyId: string, onAdded
                             sx: { backgroundImage: 'none' },
                         },
                     }}>
-                <DialogTitle>Ajouter un membre virtuel</DialogTitle>
+                <DialogTitle>Ajouter un membre</DialogTitle>
                 <DialogContent
                     sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '100%' }}
                 >
                     <DialogContentText>
-                        Entrez le nom du membre virtuel (pas d'email requis).
+                        Entrez le nom du membre (pas d'email requis). Sa liste de souhaits sera gérée par la famille.
                     </DialogContentText>
                     {error && <Typography color="error">{error}</Typography>}
                     <OutlinedInput

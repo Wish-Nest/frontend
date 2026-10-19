@@ -17,7 +17,7 @@ export default function MemberHeader({ member, currentUserUuid, onAddSelf, onAdd
 
     if (!member) return null;
 
-    // On peut renommer son propre nom, ou n'importe quel membre virtuel.
+    // On peut renommer son propre nom, ou un membre dont la liste est gérée par la famille.
     const canRename = member.userUuid === currentUserUuid || member.virtual === true;
 
     return (

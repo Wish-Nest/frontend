@@ -114,9 +114,9 @@ export default function MemberGifts({ gifts, privateData, member, family, curren
 
     // Seul le propriétaire de la liste peut définir l'ordre de priorité de ses cadeaux.
     const canReorder = Boolean(currentUserUuid) && member.userUuid === currentUserUuid;
-    // Le switch n'apparaît que sur sa propre liste, jamais sur un membre virtuel
-    // (déjà écarté par canReorder — l'uuid d'un virtuel n'est pas celui de
-    // l'utilisateur connecté — mais on le rend explicite).
+    // Le switch n'apparaît que sur sa propre liste, jamais sur une liste gérée
+    // par la famille (déjà écartée par canReorder — l'uuid de l'utilisateur
+    // fictif n'est pas celui de l'utilisateur connecté — mais on le rend explicite).
     const canTogglePriority = canReorder && member.virtual !== true;
     // Les badges et le glisser-déposer suivent le réglage serveur, pour tous
     // les visiteurs de la liste.
