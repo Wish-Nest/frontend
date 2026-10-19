@@ -15,3 +15,12 @@ interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
 
+// Injectée côté client par /config.js (régénéré par entrypoint.sh au
+// démarrage du conteneur Docker) : seules valeurs non figées au build.
+interface Window {
+  readonly __ENV__?: {
+    readonly API_BASE_URL?: string;
+    readonly VAPID_PUBLIC_KEY?: string;
+  };
+}
+

@@ -1,2 +1,7 @@
 node_modules
 build
+
+# Variables d'environnement du dev local : la config est maintenant injectée
+# au démarrage du conteneur (voir entrypoint.sh), pas au build.
+.env
+.env.*

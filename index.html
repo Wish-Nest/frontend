@@ -8,6 +8,9 @@
     <link rel="icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" href="/logo.webp" />
     <link rel="manifest" href="/manifest.json" />
+    <!-- Config runtime (générée au démarrage du conteneur) : doit être chargée
+         avant le bundle pour que window.__ENV__ soit disponible. -->
+    <script src="/config.js"></script>
     <title>WishNest</title>
   </head>
   <body>
