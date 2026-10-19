@@ -1,6 +1,6 @@
 import React from 'react';
-import { Card, CardHeader, CardContent, Stack, Typography, Box, Divider } from "@mui/material";
-import { Lock } from "@mui/icons-material";
+import { Avatar, Card, CardHeader, CardContent, Stack, Typography, Box, Divider } from "@mui/material";
+import { Lock, Person } from "@mui/icons-material";
 import EditGift from "./EditGift";
 import DeleteGift from "./DeleteGift";
 import GiftPrivateContentPopup from "./private/GiftPrivateContentPopup";
@@ -12,17 +12,27 @@ interface PrivateGiftCardProps {
     privateData?: any;
     currentUserUuid?: string | undefined;
     family?: any;
+    /**
+     * Liste gérée : masque le bandeau « Ce cadeau est privé » (et le cadenas),
+     * tout en gardant la personne qui propose le cadeau.
+     */
+    hidePrivateNotice?: boolean;
     onEdit?: () => void;
     onDelete?: () => void;
     onUpdatePrivate?: () => void;
 }
 
-export default function PrivateGiftCard({ gift, privateData, currentUserUuid, family, onEdit, onDelete, onUpdatePrivate }: PrivateGiftCardProps) {
+export default function PrivateGiftCard({ gift, privateData, currentUserUuid, family, hidePrivateNotice, onEdit, onDelete, onUpdatePrivate }: PrivateGiftCardProps) {
     const taken = privateData && privateData?.[gift.uuid] && privateData[gift.uuid]?.takenBy !== null;
 
     function getFamilyMemberByUuid(uuid: string) {
         return family?.members?.find((v: any) => v.userUuid === uuid);
     }
+
+    const proposer = getFamilyMemberByUuid(gift.byUserUuid);
+    const proposerLabel = (gift.byUserUuid === currentUserUuid
+        ? "Vous avez"
+        : (proposer ? proposer.name + " a" : "Un inconnu a")) + " proposé ce cadeau";
 
     console.log(privateData);
 
@@ -36,9 +46,13 @@ export default function PrivateGiftCard({ gift, privateData, currentUserUuid, fa
                 'outlined'
         }>
             <CardHeader
-                avatar={<Lock />}
-                title={"Ce cadeau est privé"}
-                subheader={(gift.byUserUuid === currentUserUuid ? "Vous avez" : (getFamilyMemberByUuid(gift.byUserUuid) ? (getFamilyMemberByUuid(gift.byUserUuid)?.name + " a") : "Un inconnu a")) + " proposé ce cadeau"}
+                avatar={hidePrivateNotice ? (
+                    <Avatar src={proposer?.image ? API_BASE_URL + proposer.image : undefined}>
+                        <Person />
+                    </Avatar>
+                ) : <Lock />}
+                title={hidePrivateNotice ? undefined : "Ce cadeau est privé"}
+                subheader={proposerLabel}
                 action={gift.byUserUuid === currentUserUuid ? <EditGift gift={gift} onEdit={onEdit} /> : null}
             />
             <CardContent>

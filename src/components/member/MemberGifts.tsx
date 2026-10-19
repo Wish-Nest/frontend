@@ -261,6 +261,8 @@ export default function MemberGifts({ gifts, privateData, member, family, curren
                     privateData={privateData}
                     currentUserUuid={currentUserUuid}
                     family={family}
+                    // Liste gérée : pas de bandeau « privé », juste le propositeur.
+                    hidePrivateNotice={member?.virtual === true}
                     onEdit={() => { if (member) fetchPrivateData?.(member); }}
                     onDelete={() => { if (member) fetchPrivateData?.(member); }}
                     onUpdatePrivate={() => { if (member) fetchPrivateData?.(member); }}
