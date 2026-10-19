@@ -2,7 +2,7 @@ import {useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import Stack from "@mui/material/Stack";
-import {Card, CardContent, Chip, CircularProgress, Grid, ListItemAvatar} from "@mui/material";
+import {Box, Card, CardContent, Chip, CircularProgress, Grid, ListItemAvatar} from "@mui/material";
 import Typography from "@mui/material/Typography";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -151,8 +151,43 @@ export default function FamilyIndex() {
                                                 <ListItemText
                                                     primary={m.name}
                                                 />
-                                                {m.userUuid === user?.uuid && <Chip label="Vous" color="success" variant="outlined" />}
-                                                {m.virtual && <Chip label="Liste gérée" title="Les souhaits de ce membre sont suivis par un membre de la famille" color="secondary" variant="outlined" />}
+                                                {/* Mobile (< md) : les badges sont réduits à un point    */}
+                                                {/* de la même couleur pour ne pas écraser la ligne membre. */}
+                                                {m.userUuid === user?.uuid && (
+                                                    <>
+                                                        <Chip label="Vous" color="success" variant="outlined"
+                                                             sx={{display: {xs: 'none', md: 'inline-flex'}}}/>
+                                                        <Box title="Vous" aria-label="Vous" sx={{
+                                                            display: {xs: 'block', md: 'none'},
+                                                            width: 10,
+                                                            height: 10,
+                                                            borderRadius: '50%',
+                                                            backgroundColor: 'success.main',
+                                                            flexShrink: 0,
+                                                            alignSelf: 'center',
+                                                            mr: 0.75,
+                                                        }}/>
+                                                    </>
+                                                )}
+                                                {m.virtual && (
+                                                    <>
+                                                        <Chip label="Liste gérée" title="Les souhaits de ce membre sont suivis par un membre de la famille" color="secondary" variant="outlined"
+                                                             sx={{display: {xs: 'none', md: 'inline-flex'}}}/>
+                                                        <Box
+                                                            title="Les souhaits de ce membre sont suivis par un membre de la famille"
+                                                            aria-label="Liste gérée"
+                                                            sx={{
+                                                                display: {xs: 'block', md: 'none'},
+                                                                width: 10,
+                                                                height: 10,
+                                                                borderRadius: '50%',
+                                                                backgroundColor: 'secondary.main',
+                                                                flexShrink: 0,
+                                                                alignSelf: 'center',
+                                                                mr: 0.75,
+                                                            }}/>
+                                                    </>
+                                                )}
                                                 <Stack sx={{ marginLeft: '0.5rem' }}></Stack>
                                                 {canRenameMember(m) && <RenameMemberButton
                                                     member={m}
