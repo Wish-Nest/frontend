@@ -68,7 +68,8 @@ export default function Index() {
             .then(response => {
                 setTakenGifts(Array.isArray(response.data) ? response.data : []);
             })
-            .catch(() => {
+            .catch((error) => {
+                console.error("Impossible de charger les cadeaux à prendre :", error);
                 setTakenGifts([]);
             })
             .finally(() => {
