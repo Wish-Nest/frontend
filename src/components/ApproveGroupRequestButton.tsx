@@ -10,7 +10,7 @@ export default function ApproveGroupRequestButton (props: {request: GroupRequest
 
     const acceptGroupRequest = async (request: GroupRequest) => {
         setLoading(true);
-        await axios.post("/family/"+request.familyId+"/groups/requests/"+request.uuid+"/accept")
+        await axios.post("/family/"+request.familyId+"/groups/requests/"+request.uuid+"/accept", {})
             .then(response => {
                 props.onSuccess();
             })

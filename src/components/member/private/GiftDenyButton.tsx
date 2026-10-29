@@ -17,7 +17,7 @@ export default function GiftDenyButton({gift, onUpdated}: {
 
     function denyGift() {
         setLoading(true);
-        return axios.post("/gift/" + gift.uuid + "/deny")
+        return axios.post("/gift/" + gift.uuid + "/deny", {})
             .then(() => {
                 if (onUpdated) {
                     onUpdated();

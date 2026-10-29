@@ -17,7 +17,9 @@ export default function GiftAcceptButton({gift, onUpdated}: {
 
     function acceptGift() {
         setLoading(true);
-        return axios.post("/gift/" + gift.uuid + "/accept")
+        // Corps JSON vide obligatoire : sans Content-Type, Fastify renvoie 415
+        // quand un proxy (Cloudflare) transmet la requête en chunked.
+        return axios.post("/gift/" + gift.uuid + "/accept", {})
             .then(() => {
                 if (onUpdated) {
                     onUpdated();
